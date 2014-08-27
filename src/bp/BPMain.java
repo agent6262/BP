@@ -50,10 +50,10 @@ public class BPMain extends javax.swing.JFrame {
                             if(chatUpdating)
                             {
                                 try {
-                                    if(sslclientSocket.getServerReader().ready())
+                                    if(sslclientSocket.getServerReader().ready()){
                                         jTextArea2.append(sslclientSocket.getServerReader().readLine()+"\n");
                                         jTextArea2.setCaretPosition(jTextArea2.getDocument().getLength()-1);
-                                    }//may not need
+                                }
                                 } catch (IOException ex) {
                                     chatUpdating = false;
                                     jTextArea1.setEnabled(false);
