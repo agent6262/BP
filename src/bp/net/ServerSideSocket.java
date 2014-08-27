@@ -6,11 +6,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
 
 public class ServerSideSocket
 {
-	private ServerSocket serverSocket;						//The server side socket
-	private Socket clientSocket;							//The client socket that the serverSocket communicates with
+	private SSLServerSocket sslserverSocket;						//The server side socket
+	private SSLSocket sslclientSocket;							//The client socket that the serverSocket communicates with
 	private PrintWriter clientPrinter;						//Output stream to the client
 	private BufferedReader clientReader;					//Input stream from the client
 	private String clientMessage;							//message obtained from the client
@@ -24,10 +27,10 @@ public class ServerSideSocket
 	{
 		try
 		{
-			serverSocket = new ServerSocket(portNumber);
-			clientSocket = serverSocket.accept();//waits at this point till a client connects
-			clientPrinter = new PrintWriter(clientSocket.getOutputStream(), true);
-			clientReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			sslserverSocket = (SSLServerSocket) SSLServerSocketFactory.getDefault().createServerSocket(portNumber);
+			sslclientSocket = (SSLSocket) sslserverSocket.accept();//waits at this point till a client connects
+			clientPrinter = new PrintWriter(sslclientSocket.getOutputStream(), true);
+			clientReader = new BufferedReader(new InputStreamReader(sslclientSocket.getInputStream()));
 		}catch (IOException e){
 			System.out.println("The server could not bind the socket to that port number");
 			System.out.println("ERROR: "+e.getMessage());
@@ -71,7 +74,7 @@ public class ServerSideSocket
 	 */
 	public Socket getClientSocket()
 	{
-		return clientSocket;
+		return sslclientSocket;
 	}
 
 	/**
@@ -81,7 +84,7 @@ public class ServerSideSocket
 	 */
 	public ServerSocket getServerSocket()
 	{
-		return serverSocket;
+		return sslserverSocket;
 	}
 
 	/**

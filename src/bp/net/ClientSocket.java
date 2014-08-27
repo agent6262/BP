@@ -7,10 +7,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 
 public class ClientSocket
 {
-	private Socket client;
+	private SSLSocket sslclient;
 	private PrintWriter serverPrinter;
 	private BufferedReader serverReader;
 	
@@ -24,9 +26,10 @@ public class ClientSocket
 	{
 		try
 		{
-			client = new Socket(host, portNumber);
-			serverPrinter = new PrintWriter(client.getOutputStream(), true);
-                        serverReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+			sslclient = (SSLSocket) SSLSocketFactory.getDefault().createSocket(host, portNumber);
+                        sslclient.startHandshake();
+			serverPrinter = new PrintWriter(sslclient.getOutputStream(), true);
+                        serverReader = new BufferedReader(new InputStreamReader(sslclient.getInputStream()));
 		} catch (IOException e)
 		{
 			System.out.println("The host | The host at the spceified port does not exist");
@@ -41,7 +44,7 @@ public class ClientSocket
                 
                 serverReader.close();
                 serverPrinter.close();
-                client.close();
+                sslclient.close();
             } catch (IOException ex) {
                 Logger.getLogger(ClientSocket.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -54,7 +57,7 @@ public class ClientSocket
 	 */
 	public Socket getClient()
 	{
-		return client;
+		return sslclient;
 	}
         
 
@@ -81,6 +84,7 @@ public class ClientSocket
 	/**
 	 * 
 	 * Attempts to send the message to the ServerSideSocket
+         * @param message the message to be sent
 	 */
 	public void sendMessage(String message)
 	{

@@ -28,7 +28,7 @@ public class BPMain extends javax.swing.JFrame {
 
     
     int posX=0,posY=0;
-    ClientSocket clientSocket;
+    ClientSocket sslclientSocket;
     Thread chatUpdate;
     Thread misc;
     long pastTime = System.currentTimeMillis();
@@ -42,6 +42,9 @@ public class BPMain extends javax.swing.JFrame {
      * Creates new form BPMain
      */
     public BPMain() {
+        //System.setProperty("javax.net.ssl.trustStore", "/bp/net/agent6262KeyStore");
+        //System.setProperty("javax.net.ssl.trustStorePassword", "223196522419553181997");
+        
         chatUpdate = new Thread(
                 new Runnable(){
                     public void run(){
@@ -51,8 +54,8 @@ public class BPMain extends javax.swing.JFrame {
                             if(chatUpdating)
                             {
                                 try {
-                                    if(clientSocket.getServerReader().ready())
-                                        jTextArea2.append(clientSocket.getServerReader().readLine()+"\n");
+                                    if(sslclientSocket.getServerReader().ready())
+                                        jTextArea2.append(sslclientSocket.getServerReader().readLine()+"\n");
                                         jTextArea2.setCaretPosition(jTextArea2.getDocument().getLength()-1);
                                 } catch (IOException ex) {
                                     chatUpdating = false;
@@ -60,8 +63,8 @@ public class BPMain extends javax.swing.JFrame {
                                     jTextArea1.setEnabled(false);
                                     jTextArea1.setEnabled(false);
                                     jTextField2.setEnabled(false);
-                                    clientSocket.close();
-                                    clientSocket = null;
+                                    sslclientSocket.close();
+                                    sslclientSocket = null;
                                     //System.gc();
                                 }
                             }
@@ -505,11 +508,11 @@ public class BPMain extends javax.swing.JFrame {
     private void jLabel1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseReleased
         if(jLabel1.contains(evt.getX(), evt.getY()))
         {
-            if(clientSocket != null)
+            if(sslclientSocket != null)
             {
-                clientSocket.sendMessage("SOCKET_TO_SERVER_CLOSE");
+                sslclientSocket.sendMessage("SOCKET_TO_SERVER_CLOSE");
                 chatStat = false;
-                clientSocket.close();
+                sslclientSocket.close();
             }
             System.exit(0);
         }
@@ -563,13 +566,13 @@ public class BPMain extends javax.swing.JFrame {
             if(jPanel2.getBackground().equals(new Color(26, 25, 24)))
                 jPanel2.setBackground(new Color(55, 54, 52));
             
-            if(clientSocket == null)
+            if(sslclientSocket == null)
             {
                 try{
-                    clientSocket = new ClientSocket("192.168.1.127", 27331);
-                    clientSocket.sendMessage(BP01.sUsername);
+                    sslclientSocket = new ClientSocket("192.168.1.127", 27331);
+                    sslclientSocket.sendMessage(BP01.sUsername);
                     try {
-                        userList = (ArrayList<String>) new ObjectInputStream(clientSocket.getClient().getInputStream()).readObject();
+                        userList = (ArrayList<String>) new ObjectInputStream(sslclientSocket.getClient().getInputStream()).readObject();
                     } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(BPMain.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -581,11 +584,11 @@ public class BPMain extends javax.swing.JFrame {
                     jTextArea1.setEnabled(false);
                     jTextArea1.setEnabled(false);
                     jTextField2.setEnabled(false);
-                    clientSocket = null;
+                    sslclientSocket = null;
                 }finally{
                     if(!chatUpdate.isAlive())
                         chatUpdate.start();
-                    if(clientSocket != null)
+                    if(sslclientSocket != null)
                     {
                         jTextArea1.setEnabled(true);
                         jTextArea1.setEnabled(true);
@@ -650,7 +653,7 @@ public class BPMain extends javax.swing.JFrame {
     private void jTextField2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField2KeyPressed
         if(evt.getKeyCode() == KeyEvent.VK_ENTER)
         {
-            clientSocket.sendMessage(jTextField2.getText());
+            sslclientSocket.sendMessage(jTextField2.getText());
             jTextField2.setText("");
         }
     }//GEN-LAST:event_jTextField2KeyPressed
