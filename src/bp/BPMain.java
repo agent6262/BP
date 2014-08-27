@@ -7,8 +7,10 @@
 package bp;
 
 import bp.net.ClientSocket;
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.UnknownHostException;
@@ -93,6 +95,11 @@ public class BPMain extends javax.swing.JFrame {
         initComponents();
         jPanel4.setVisible(false);
         misc.start();
+        
+        jTextField2.setEnabled(false);
+        jTextArea1.setEnabled(false);
+        jTextArea2.setEnabled(false);
+        jTextArea3.setEnabled(false);
     }
 
     /**
@@ -318,6 +325,11 @@ public class BPMain extends javax.swing.JFrame {
 
         jButton1.setText("Host");
         jButton1.setOpaque(false);
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
 
         jLabel11.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel11.setForeground(new java.awt.Color(153, 153, 153));
@@ -330,6 +342,11 @@ public class BPMain extends javax.swing.JFrame {
         jButton2.setText("Join");
         jButton2.setOpaque(false);
         jButton2.setPreferredSize(new java.awt.Dimension(55, 23));
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton2MouseClicked(evt);
+            }
+        });
 
         jLabel12.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(153, 153, 153));
@@ -356,9 +373,8 @@ public class BPMain extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel11)
                     .addComponent(jTextField3)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jButton2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTextField4)
                     .addComponent(jLabel12)
                     .addComponent(jButton3)
                     .addComponent(jScrollPane4))
@@ -589,39 +605,6 @@ public class BPMain extends javax.swing.JFrame {
             }
             if(jPanel2.getBackground().equals(new Color(26, 25, 24)))
                 jPanel2.setBackground(new Color(55, 54, 52));
-            
-            if(sslclientSocket == null)
-            {
-                try{
-                    sslclientSocket = new ClientSocket("10.4.34.148", 339);
-                    sslclientSocket.sendMessage(BP01.sUsername);
-                    try {
-                        userList = (ArrayList<String>) new ObjectInputStream(sslclientSocket.getClient().getInputStream()).readObject();
-                    } catch (IOException | ClassNotFoundException ex) {
-                        Logger.getLogger(BPMain.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    jLabel9.setForeground(new Color(51, 153, 0));
-                }catch(Exception e){
-                    jLabel9.setForeground(new Color(153, 51, 0));
-                    chatUpdating = false;
-                    jTextArea1.setEnabled(false);
-                    jTextArea1.setEnabled(false);
-                    jTextArea1.setEnabled(false);
-                    jTextField2.setEnabled(false);
-                    sslclientSocket = null;
-                }finally{
-                    if(!chatUpdate.isAlive())
-                        chatUpdate.start();
-                    if(sslclientSocket != null)
-                    {
-                        jTextArea1.setEnabled(true);
-                        jTextArea1.setEnabled(true);
-                        jTextArea1.setEnabled(true);
-                        jTextField2.setEnabled(true);
-                        chatUpdating = true;
-                    }
-                }
-            }
         }
         else
             if(jPanel4.isVisible())
@@ -681,6 +664,60 @@ public class BPMain extends javax.swing.JFrame {
             jTextField2.setText("");
         }
     }//GEN-LAST:event_jTextField2KeyPressed
+
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        
+    }//GEN-LAST:event_jButton2MouseClicked
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        if(evt.getButton() == 1){
+            jTextField2.setEnabled(true);
+            jTextArea1.setEnabled(true);
+            jTextArea2.setEnabled(true);
+            jTextArea3.setEnabled(true);
+            
+            if(sslclientSocket == null)
+            {
+                try{
+                    sslclientSocket = new ClientSocket("10.4.34.148", 339);
+                    sslclientSocket.sendMessage(BP01.sUsername);
+                    try {
+                        userList = (ArrayList<String>) new ObjectInputStream(sslclientSocket.getClient().getInputStream()).readObject();
+                    } catch (IOException | ClassNotFoundException ex) {
+                        Logger.getLogger(BPMain.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    jLabel9.setForeground(new Color(51, 153, 0));
+                }catch(Exception e){
+                    jLabel9.setForeground(new Color(153, 51, 0));
+                    chatUpdating = false;
+                    jTextArea1.setEnabled(false);
+                    jTextArea1.setEnabled(false);
+                    jTextArea1.setEnabled(false);
+                    jTextField2.setEnabled(false);
+                    sslclientSocket = null;
+                }finally{
+                    if(!chatUpdate.isAlive())
+                        chatUpdate.start();
+                    if(sslclientSocket != null)
+                    {
+                        jTextArea1.setEnabled(true);
+                        jTextArea1.setEnabled(true);
+                        jTextArea1.setEnabled(true);
+                        jTextField2.setEnabled(true);
+                        chatUpdating = true;
+                    }
+                }
+            }
+            jLabel4.dispatchEvent(new MouseEvent(client.a
+                           .getComponentAt(1, 1),
+                               MouseEvent.MOUSE_MOVED,
+                               System.currentTimeMillis(),
+                               MouseEvent.NOBUTTON,
+                               x,y,
+                               1,
+                               false));
+       }
+    }//GEN-LAST:event_jButton1MouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
