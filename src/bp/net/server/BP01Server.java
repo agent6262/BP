@@ -6,17 +6,20 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import javax.net.ssl.SSLServerSocket;
+import javax.swing.JTextArea;
 
-import bp.net.server.ServerSideSocket;
 
 public class BP01Server
 {
-	public static ArrayList<ServerSideSocket> socketList = new ArrayList<ServerSideSocket>();
-	public static ArrayList<String> socketNameList = new ArrayList<String>();
+	public static ArrayList<ServerSideSocket> socketList = new ArrayList<>();
+	public static ArrayList<String> socketNameList = new ArrayList<>();
 	private static SSLServerSocket sslserverSocket;
+        public static JTextArea jTextArea;
+        public static int port;
 	
 	static Thread socketThread = new Thread(
 			new Runnable(){
+                                @Override
 				public void run(){
 					while(true)
 					{
@@ -27,6 +30,7 @@ public class BP01Server
 	
 	static Thread socketRunThread = new Thread(
 			new Runnable(){
+                                @Override
 				public void run(){
 					while(true)
 						for(int i=0;i<socketList.size();i++)
@@ -34,37 +38,38 @@ public class BP01Server
 
 				}});
 	
-	/**
-	 * @param args
-	 * @throws IOException 
-	 */
-	public static void main(String[] args)
+        public BP01Server(JTextArea jTextArea, int port){
+            BP01Server.jTextArea = jTextArea;
+            BP01Server.port = port;
+        }
+        
+	public void run()
 	{
-		//System.setProperty("javax.net.ssl.keyStore", "/bp/net/agent6262KeyStore");java.security.KeyStore
-		//System.setProperty("javax.net.ssl.keyStorePassword", "223196522419553181997");s
+		System.setProperty("javax.net.ssl.keyStore", "C:/Users/Tyler/agent6262KeyStore");
+		System.setProperty("javax.net.ssl.keyStorePassword", "223196522419553181997");
 		
-		System.out.print("Starting Server Side Socket On Port 27331: ");
+		jTextArea.append("Starting Server Side Socket On Port 27331: ");
 		try{
-			sslserverSocket = (SSLServerSocket) javax.net.ssl.SSLServerSocketFactory.getDefault().createServerSocket(139);
+			sslserverSocket = (SSLServerSocket) javax.net.ssl.SSLServerSocketFactory.getDefault().createServerSocket(port);
 			sslserverSocket.setEnabledCipherSuites(sslserverSocket.getEnabledCipherSuites());
 		} catch (IOException e){
-			System.err.println("(ERROR: "+e.getMessage()+")");
+			jTextArea.append("(ERROR: "+e.getMessage()+")\n");
 		}finally{
 			if(sslserverSocket != null)
-				System.out.println("Done");
+				jTextArea.append("Done\n");
 			else{
-				System.err.println("Shutting Down Due To: No Open Ports for the ServerSocket");
+				jTextArea.append("Shutting Down Due To: No Open Ports for the ServerSocket\n");
 				System.exit(1);
 			}
 		}
 		
-		System.out.print("Starting Server Socket Thread: ");
+		jTextArea.append("Starting Server Socket Thread: ");
 		socketThread.start();
-		System.out.println("Done");
+		jTextArea.append("Done\n");
 		
-		System.out.print("Starting Socket Run Thread: ");
+		jTextArea.append("Starting Socket Run Thread: ");
 		socketRunThread.start();
-		System.out.println("Done");
+		jTextArea.append("Done\n");
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
@@ -77,10 +82,10 @@ public class BP01Server
 					case "EXIT":
 						System.exit(0);
 					default:
-						System.out.println("Type /help or /? for a list of commands");
+						jTextArea.append("Type /help or /? for a list of commands\n");
 					}
 			} catch (IOException e){
-				e.printStackTrace();
+                            //FIXME
 			}
 			
 			for(int i=0;i<socketList.size();i++)

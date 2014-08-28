@@ -33,15 +33,15 @@ public class ServerSideSocket
 		{
 			//sslserverSocket.setNeedClientAuth(true);
 			sslclientSocket = (SSLSocket) sslserverSocket.accept();//waits at this point till a client connects
-			System.out.println("New client connected: PORT[27331]");
+			BP01Server.jTextArea.append("New client connected: PORT[27331]\n");
 			clientPrinter = new PrintWriter(sslclientSocket.getOutputStream(), true);
 			clientReader = new BufferedReader(new InputStreamReader(sslclientSocket.getInputStream()));
 			objectPrinter = new ObjectOutputStream(sslclientSocket.getOutputStream());
 			setClientname(clientReader.readLine());
 			objectPrinter.writeObject(BP01Server.socketNameList);
 		}catch (IOException e){
-			System.out.println("The server could not bind the socket to that port number");
-			System.out.println("ERROR: "+e.getMessage());
+			BP01Server.jTextArea.append("The server could not bind the socket to that port number\n");
+			BP01Server.jTextArea.append("ERROR: "+e.getMessage()+"\n");
 		}
 	}
 	
@@ -122,7 +122,7 @@ public class ServerSideSocket
 				{
 					if(inputLine.equals("SOCKET_TO_SERVER_CLOSE"))
 					{
-						System.out.println("The Client ["+clientName+"] Has Disconnected");
+						BP01Server.jTextArea.append("The Client ["+clientName+"] Has Disconnected\n");
 						BP01Server.socketNameList.remove(clientName);
 						BP01Server.socketList.remove(this);
 					}
@@ -131,7 +131,7 @@ public class ServerSideSocket
 				}
 			}
 		} catch (IOException e){
-			System.err.println("Fatel error");
+			BP01Server.jTextArea.append("Fatel error\n");
 		}
 	}
 }

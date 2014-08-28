@@ -7,16 +7,21 @@
 package bp;
 
 import bp.net.ClientSocket;
+import bp.net.server.BP01Server;
 import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.Inet4Address;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 /**
  *
  * @author Tyler
@@ -27,7 +32,7 @@ public class BPMain extends javax.swing.JFrame {
     int posX=0,posY=0;
     ClientSocket sslclientSocket;
     Thread chatUpdate;
-    Thread misc;
+    Thread server;
     long pastTime = System.currentTimeMillis();
     ArrayList<String> userList;
     boolean chatStat = true;
@@ -77,24 +82,8 @@ public class BPMain extends javax.swing.JFrame {
                         }
                     }});
         
-        misc = new Thread(
-                new Runnable(){
-                    public void run(){
-                        while(chatStat){
-                            try {//use port 445 for school || 135 | 139
-                                jLabel8.setForeground(java.net.Inet4Address.getByName("192.168.1.127").isReachable(5000) ? new Color(51, 153, 0) : new Color(153, 51, 0));
-                            } catch (UnknownHostException ex) {
-                                Logger.getLogger(BPMain.class.getName()).log(Level.SEVERE, null, ex);
-                            } catch (IOException ex) {
-                                Logger.getLogger(BPMain.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                    }
-                });
-        
         initComponents();
         jPanel4.setVisible(false);
-        misc.start();
         
         jTextField2.setEnabled(false);
         jTextArea1.setEnabled(false);
@@ -136,6 +125,8 @@ public class BPMain extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jTextArea4 = new javax.swing.JTextArea();
         jPanel4 = new javax.swing.JPanel();
         jTextField2 = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -321,7 +312,16 @@ public class BPMain extends javax.swing.JFrame {
         jLabel10.setForeground(new java.awt.Color(153, 153, 153));
         jLabel10.setText("Host Server");
 
+        jTextField1.setForeground(new java.awt.Color(153, 153, 153));
         jTextField1.setText("Server Port: 1234");
+        jTextField1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextField1FocusLost(evt);
+            }
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextField1FocusGained(evt);
+            }
+        });
 
         jButton1.setText("Host");
         jButton1.setOpaque(false);
@@ -335,8 +335,10 @@ public class BPMain extends javax.swing.JFrame {
         jLabel11.setForeground(new java.awt.Color(153, 153, 153));
         jLabel11.setText("Join Server");
 
+        jTextField3.setForeground(new java.awt.Color(153, 153, 153));
         jTextField3.setText("Server Address");
 
+        jTextField4.setForeground(new java.awt.Color(153, 153, 153));
         jTextField4.setText("Port");
 
         jButton2.setText("Join");
@@ -354,8 +356,17 @@ public class BPMain extends javax.swing.JFrame {
 
         jButton3.setText("Scan");
         jButton3.setOpaque(false);
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton3MouseClicked(evt);
+            }
+        });
 
         jScrollPane4.setViewportView(jList1);
+
+        jTextArea4.setColumns(20);
+        jTextArea4.setRows(5);
+        jScrollPane5.setViewportView(jTextArea4);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -364,21 +375,31 @@ public class BPMain extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel10)
+                            .addComponent(jButton1)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel11)
-                    .addComponent(jTextField3)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField4)
-                    .addComponent(jLabel12)
-                    .addComponent(jButton3)
-                    .addComponent(jScrollPane4))
-                .addContainerGap(127, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel11)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel12)
+                                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jButton3))
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(150, 150, 150))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -387,27 +408,27 @@ public class BPMain extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel10)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton1))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel11)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(11, 11, 11)
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane5)))
                 .addContainerGap())
         );
 
@@ -666,10 +687,6 @@ public class BPMain extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField2KeyPressed
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
-        
-    }//GEN-LAST:event_jButton2MouseClicked
-
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         if(evt.getButton() == 1){
             jTextField2.setEnabled(true);
             jTextArea1.setEnabled(true);
@@ -679,7 +696,7 @@ public class BPMain extends javax.swing.JFrame {
             if(sslclientSocket == null)
             {
                 try{
-                    sslclientSocket = new ClientSocket("10.4.34.148", 339);
+                    sslclientSocket = new ClientSocket(jTextField3.getText(), Integer.parseInt(jTextField4.getText()));
                     sslclientSocket.sendMessage(BP01.sUsername);
                     try {
                         userList = (ArrayList<String>) new ObjectInputStream(sslclientSocket.getClient().getInputStream()).readObject();
@@ -708,16 +725,66 @@ public class BPMain extends javax.swing.JFrame {
                     }
                 }
             }
-            jLabel4.dispatchEvent(new MouseEvent(client.a
-                           .getComponentAt(1, 1),
-                               MouseEvent.MOUSE_MOVED,
+            jLabel4.dispatchEvent(new MouseEvent(jPanel1.getComponentAt(172, 71),
+                               MouseEvent.MOUSE_CLICKED,
                                System.currentTimeMillis(),
                                MouseEvent.NOBUTTON,
-                               x,y,
+                               172,71,
                                1,
                                false));
        }
+    }//GEN-LAST:event_jButton2MouseClicked
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        server = new Thread(new Runnable(){
+            @Override
+            public void run(){
+                BP01Server bp01Server = new BP01Server(jTextArea4, Integer.parseInt(jTextField1.getText()));
+                bp01Server.run();
+            }});server.start();
+            
+            if(server.isAlive()){
+                jLabel8.setForeground(new Color(153, 51, 0));
+            }
+            else{
+                jLabel8.setForeground(new Color(51, 153, 0));
+            }
     }//GEN-LAST:event_jButton1MouseClicked
+
+    private void jTextField1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField1FocusGained
+        if(jTextField1.getText().equals("Server Port: 1234")){
+            jTextField1.setText("");
+            jTextField1.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_jTextField1FocusGained
+
+    private void jTextField1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField1FocusLost
+        if(jTextField1.getText().equals("")){
+            jTextField1.setText("Server Port: 1234");
+            jTextField1.setForeground(new Color(153, 153, 153));
+        }
+    }//GEN-LAST:event_jTextField1FocusLost
+
+    private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
+        if(evt.getButton() == 1){
+            try{
+                Socket s;
+                Scanner scan = new Scanner(Inet4Address.getLocalHost().getHostAddress());
+                DefaultListModel listModel = new DefaultListModel();
+                String ip = scan.next("\\d{1,3}");
+                for(int x=0;x<255;x++)
+                    for(int y=0;y<255;y++)
+                        for(int z=0;z<255;z++)
+                            for(int p=0;p<65536;p++){
+                                s = new Socket((ip+x+y+z), p);
+                                listModel.addElement((ip+x+y+z+":"+p));
+                            }
+                jList1.setModel(listModel);
+            } catch (IOException ex) {
+                
+            }
+        }
+    }//GEN-LAST:event_jButton3MouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -745,10 +812,12 @@ public class BPMain extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextArea jTextArea3;
+    private javax.swing.JTextArea jTextArea4;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;

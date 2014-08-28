@@ -27,7 +27,7 @@ public class ClientSocket
 		try
 		{
 			sslclient = (SSLSocket) SSLSocketFactory.getDefault().createSocket(host, portNumber);
-                        sslclient.startHandshake();
+                        //sslclient.startHandshake();
 			serverPrinter = new PrintWriter(sslclient.getOutputStream(), true);
                         serverReader = new BufferedReader(new InputStreamReader(sslclient.getInputStream()));
 		} catch (IOException e)
