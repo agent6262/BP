@@ -43,6 +43,7 @@ public class ServerSideSocket
 			BP01Server.jTextArea.append("The server could not bind the socket to that port number\n");
 			BP01Server.jTextArea.append("ERROR: "+e.getMessage()+"\n");
 		}
+                System.out.println("done with client");
 	}
 	
 	private void setClientname(String clientName)
@@ -117,6 +118,7 @@ public class ServerSideSocket
 		try{
 			if(clientReader.ready())
 			{
+                            System.out.println("client reader ready");
 				String inputLine;
 				if((inputLine = clientReader.readLine()) != null)
 				{
@@ -126,8 +128,10 @@ public class ServerSideSocket
 						BP01Server.socketNameList.remove(clientName);
 						BP01Server.socketList.remove(this);
 					}
-					else
+                                        else{
+                                                System.out.println("message recieved");
 						newMessage = inputLine;//will fail if there is no client
+                                        }
 				}
 			}
 		} catch (IOException e){

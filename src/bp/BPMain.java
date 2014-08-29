@@ -8,7 +8,6 @@ package bp;
 
 import bp.net.ClientSocket;
 import bp.net.server.BP01Server;
-import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Inet4Address;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -44,8 +42,6 @@ public class BPMain extends javax.swing.JFrame {
      * Creates new form BPMain
      */
     public BPMain() {
-        //System.setProperty("javax.net.ssl.trustStore", "/bp/net/agent6262KeyStore");
-        //System.setProperty("javax.net.ssl.trustStorePassword", "223196522419553181997");
         
         chatUpdate = new Thread(
                 new Runnable(){
@@ -315,11 +311,11 @@ public class BPMain extends javax.swing.JFrame {
         jTextField1.setForeground(new java.awt.Color(153, 153, 153));
         jTextField1.setText("Server Port: 1234");
         jTextField1.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextField1FocusLost(evt);
-            }
             public void focusGained(java.awt.event.FocusEvent evt) {
                 jTextField1FocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextField1FocusLost(evt);
             }
         });
 
@@ -337,9 +333,25 @@ public class BPMain extends javax.swing.JFrame {
 
         jTextField3.setForeground(new java.awt.Color(153, 153, 153));
         jTextField3.setText("Server Address");
+        jTextField3.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextField3FocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextField3FocusLost(evt);
+            }
+        });
 
         jTextField4.setForeground(new java.awt.Color(153, 153, 153));
         jTextField4.setText("Port");
+        jTextField4.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextField4FocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextField4FocusLost(evt);
+            }
+        });
 
         jButton2.setText("Join");
         jButton2.setOpaque(false);
@@ -375,13 +387,13 @@ public class BPMain extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel10)
                             .addComponent(jButton1)
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -704,7 +716,7 @@ public class BPMain extends javax.swing.JFrame {
                         Logger.getLogger(BPMain.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     jLabel9.setForeground(new Color(51, 153, 0));
-                }catch(Exception e){
+                }catch(NumberFormatException e){
                     jLabel9.setForeground(new Color(153, 51, 0));
                     chatUpdating = false;
                     jTextArea1.setEnabled(false);
@@ -736,19 +748,23 @@ public class BPMain extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2MouseClicked
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-        server = new Thread(new Runnable(){
+        if(jButton1.isEnabled()){
+             server = new Thread(new Runnable(){
             @Override
             public void run(){
                 BP01Server bp01Server = new BP01Server(jTextArea4, Integer.parseInt(jTextField1.getText()));
                 bp01Server.run();
+                System.out.println("end server program");
             }});server.start();
             
+            jButton1.setEnabled(false);
             if(server.isAlive()){
                 jLabel8.setForeground(new Color(153, 51, 0));
             }
             else{
                 jLabel8.setForeground(new Color(51, 153, 0));
             }
+        }
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void jTextField1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField1FocusGained
@@ -766,25 +782,63 @@ public class BPMain extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField1FocusLost
 
     private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
-        if(evt.getButton() == 1){
-            try{
-                Socket s;
-                Scanner scan = new Scanner(Inet4Address.getLocalHost().getHostAddress());
-                DefaultListModel listModel = new DefaultListModel();
-                String ip = scan.next("\\d{1,3}");
-                for(int x=0;x<255;x++)
-                    for(int y=0;y<255;y++)
-                        for(int z=0;z<255;z++)
-                            for(int p=0;p<65536;p++){
-                                s = new Socket((ip+x+y+z), p);
-                                listModel.addElement((ip+x+y+z+":"+p));
-                            }
-                jList1.setModel(listModel);
-            } catch (IOException ex) {
-                
+        if(jButton3.isEnabled()){
+            jButton3.setEnabled(false);
+            if(evt.getButton() == 1){
+                System.out.println("im clicked");
+                try{
+                    System.out.println("im running");
+                    Socket s;
+                    //Scanner scan = new Scanner(Inet4Address.getLocalHost().getHostAddress());
+                    DefaultListModel listModel = new DefaultListModel();
+                    //String ip = scan.next("\\d{1,3}");
+                    for(int x=0;x<255;x++)
+                        for(int y=0;y<255;y++)
+                            for(int z=0;z<255;z++)
+                                for(int p=0;p<65536;p++){
+                                    System.out.println("socket");
+                                    //s = new Socket(("10"+"."+x+"."+y+"."+z), p);
+                                    s = new Socket("10.4.34.148", p);
+                                    System.out.println("Scan: "+("10"+"."+x+"."+y+"."+z)+p);
+                                    listModel.addElement(("10"+"."+x+"."+y+"."+z+":"+p));
+                                    s.close();
+                                }
+                    jList1.setModel(listModel);
+                } catch (IOException ex) {
+
+                }
             }
         }
+        
     }//GEN-LAST:event_jButton3MouseClicked
+
+    private void jTextField3FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField3FocusGained
+        if(jTextField3.getText().equals("Server Address")){
+            jTextField3.setText("");
+            jTextField3.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_jTextField3FocusGained
+
+    private void jTextField3FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField3FocusLost
+        if(jTextField3.getText().equals("")){
+            jTextField3.setText("Server Address");
+            jTextField3.setForeground(new Color(153, 153, 153));
+        }
+    }//GEN-LAST:event_jTextField3FocusLost
+
+    private void jTextField4FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField4FocusGained
+        if(jTextField4.getText().equals("Port")){
+            jTextField4.setText("");
+            jTextField4.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_jTextField4FocusGained
+
+    private void jTextField4FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField4FocusLost
+        if(jTextField4.getText().equals("")){
+            jTextField4.setText("Port");
+            jTextField4.setForeground(new Color(153, 153, 153));
+        }
+    }//GEN-LAST:event_jTextField4FocusLost
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.net.ssl.SSLServerSocket;
 import javax.swing.JTextArea;
@@ -25,6 +27,7 @@ public class BP01Server
 					{
 						socketList.add(new ServerSideSocket(sslserverSocket));
 						socketNameList.add(socketList.get(socketList.size()-1).getClientName());
+                                                System.out.println(socketList.size());
 					}
 				}});
 	
@@ -32,10 +35,17 @@ public class BP01Server
 			new Runnable(){
                                 @Override
 				public void run(){
-					while(true)
-						for(int i=0;i<socketList.size();i++)
-							socketList.get(i).run();
-
+                                    System.out.println("i started");
+					while(true){
+                                            try {
+                                                Thread.sleep(1);
+                                        } catch (InterruptedException ex) {
+                                            Logger.getLogger(BP01Server.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+						for(int i=0;i<socketList.size();i++){
+                                                    socketList.get(i).run();
+                                                }
+                                        }
 				}});
 	
         public BP01Server(JTextArea jTextArea, int port){
@@ -45,9 +55,6 @@ public class BP01Server
         
 	public void run()
 	{
-		System.setProperty("javax.net.ssl.keyStore", "C:/Users/Tyler/agent6262KeyStore");
-		System.setProperty("javax.net.ssl.keyStorePassword", "223196522419553181997");
-		
 		jTextArea.append("Starting Server Side Socket On Port 27331: ");
 		try{
 			sslserverSocket = (SSLServerSocket) javax.net.ssl.SSLServerSocketFactory.getDefault().createServerSocket(port);
@@ -59,7 +66,7 @@ public class BP01Server
 				jTextArea.append("Done\n");
 			else{
 				jTextArea.append("Shutting Down Due To: No Open Ports for the ServerSocket\n");
-				System.exit(1);
+				return;
 			}
 		}
 		
@@ -80,7 +87,7 @@ public class BP01Server
 					switch(br.readLine())
 					{
 					case "EXIT":
-						System.exit(0);
+						return;
 					default:
 						jTextArea.append("Type /help or /? for a list of commands\n");
 					}
@@ -90,11 +97,12 @@ public class BP01Server
 			
 			for(int i=0;i<socketList.size();i++)
 				if(socketList.get(i).newClientMessage())
-					for(int j=0;j<socketList.size();j++)
+					for(int j=0;j<socketList.size();j++){
 						socketList.get(j).getClientPrinter().println(socketList.get(i).getClientName()+": "+socketList.get(i).getClientMessage());
+                                                System.out.println("new message sent");
+                                        }
 		}
 		
-
 	}
 
 }

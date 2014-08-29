@@ -27,7 +27,6 @@ public class ClientSocket
 		try
 		{
 			sslclient = (SSLSocket) SSLSocketFactory.getDefault().createSocket(host, portNumber);
-                        //sslclient.startHandshake();
 			serverPrinter = new PrintWriter(sslclient.getOutputStream(), true);
                         serverReader = new BufferedReader(new InputStreamReader(sslclient.getInputStream()));
 		} catch (IOException e)
@@ -35,7 +34,7 @@ public class ClientSocket
 			System.out.println("The host | The host at the spceified port does not exist");
 			System.out.println(e.getMessage());
 		}
-        
+                System.out.println("done with object cretion");
 	}
         
         public void close()
@@ -89,6 +88,7 @@ public class ClientSocket
 	public void sendMessage(String message)
 	{
                 serverPrinter.println(message);
+                System.out.println("done with message");
 	}
 	
 	
