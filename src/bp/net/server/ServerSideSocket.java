@@ -116,8 +116,8 @@ public class ServerSideSocket
 	public void run()
 	{
 		try{
-			if(clientReader.ready())
-			{
+			//if(clientReader.ready())
+			//{
                             System.out.println("client reader ready");
 				String inputLine;
 				if((inputLine = clientReader.readLine()) != null)
@@ -133,7 +133,7 @@ public class ServerSideSocket
 						newMessage = inputLine;//will fail if there is no client
                                         }
 				}
-			}
+			//}
 		} catch (IOException e){
 			BP01Server.jTextArea.append("Fatel error\n");
 		}

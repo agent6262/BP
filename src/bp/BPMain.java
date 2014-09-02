@@ -13,10 +13,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.net.Inet4Address;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -53,10 +51,10 @@ public class BPMain extends javax.swing.JFrame {
                             if(chatUpdating)
                             {
                                 try {
-                                    if(sslclientSocket.getServerReader().ready()){
+                                    //if(sslclientSocket.getServerReader().ready()){
                                         jTextArea2.append(sslclientSocket.getServerReader().readLine()+"\n");
                                         jTextArea2.setCaretPosition(jTextArea2.getDocument().getLength()-1);
-                                }
+                                //}
                                 } catch (IOException ex) {
                                     chatUpdating = false;
                                     jTextArea1.setEnabled(false);
@@ -392,7 +390,7 @@ public class BPMain extends javax.swing.JFrame {
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel10)
                             .addComponent(jButton1)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -712,6 +710,9 @@ public class BPMain extends javax.swing.JFrame {
                     sslclientSocket.sendMessage(BP01.sUsername);
                     try {
                         userList = (ArrayList<String>) new ObjectInputStream(sslclientSocket.getClient().getInputStream()).readObject();
+                        System.out.println("object recieved");
+                        for(String s : userList)
+                            jTextArea3.append(s);
                     } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(BPMain.class.getName()).log(Level.SEVERE, null, ex);
                     }

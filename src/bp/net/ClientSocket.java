@@ -12,7 +12,7 @@ import javax.net.ssl.SSLSocketFactory;
 
 public class ClientSocket
 {
-	private SSLSocket sslclient;
+	private SSLSocket sslclient = null;
 	private PrintWriter serverPrinter;
 	private BufferedReader serverReader;
 	

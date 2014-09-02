@@ -15,7 +15,7 @@ public class BP01Server
 {
 	public static ArrayList<ServerSideSocket> socketList = new ArrayList<>();
 	public static ArrayList<String> socketNameList = new ArrayList<>();
-	private static SSLServerSocket sslserverSocket;
+	private static SSLServerSocket sslserverSocket = null;
         public static JTextArea jTextArea;
         public static int port;
 	
@@ -58,7 +58,7 @@ public class BP01Server
 		jTextArea.append("Starting Server Side Socket On Port 27331: ");
 		try{
 			sslserverSocket = (SSLServerSocket) javax.net.ssl.SSLServerSocketFactory.getDefault().createServerSocket(port);
-			sslserverSocket.setEnabledCipherSuites(sslserverSocket.getEnabledCipherSuites());
+			//sslserverSocket.setEnabledCipherSuites(sslserverSocket.getEnabledCipherSuites());
 		} catch (IOException e){
 			jTextArea.append("(ERROR: "+e.getMessage()+")\n");
 		}finally{

@@ -443,10 +443,10 @@ public class BP01 extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        System.setProperty("javax.net.ssl.keyStore", "C:\\Users\\bucher_845539\\Desktop\\agent6262KeyStore");
+        System.setProperty("javax.net.ssl.keyStore", "C:\\Users\\Tyler\\agent6262KeyStore");
 	System.setProperty("javax.net.ssl.keyStorePassword", "223196522419553181997");
                 
-        System.setProperty("javax.net.ssl.trustStore", "C:\\Users\\bucher_845539\\Desktop\\agent6262KeyStore");
+        System.setProperty("javax.net.ssl.trustStore", "C:\\Users\\Tyler\\agent6262KeyStore");
         System.setProperty("javax.net.ssl.trustStorePassword", "223196522419553181997");
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
